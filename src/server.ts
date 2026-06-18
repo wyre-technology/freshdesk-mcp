@@ -67,6 +67,7 @@ export function createServer(): Server {
             type: 'text' as const,
             text: JSON.stringify({ connected: false, domains: DOMAINS, error: 'No credentials configured' }, null, 2),
           }],
+          isError: true,
         };
       }
       try {
