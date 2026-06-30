@@ -88,9 +88,9 @@ const mockClient = {
 };
 
 vi.mock('../utils/client.js', () => ({
-  getClient: vi.fn(async () => mockClient),
+  getClient: vi.fn(() => mockClient),
   getCredentials: vi.fn(() => ({ domain: 'acme', apiKey: 'key' })),
-  resetClient: vi.fn(),
+  runWithCredentials: vi.fn((creds, fn) => fn()),
 }));
 
 // `extra` with no sendRequest -> confirmDestructive returns null -> proceed.

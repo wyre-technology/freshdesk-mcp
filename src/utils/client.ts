@@ -1,15 +1,25 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { FreshdeskClient } from '@wyre-technology/node-freshdesk';
 import { logger } from './logger.js';
 
-let _client: FreshdeskClient | null = null;
-let _credKey: string | null = null;
-
-interface Credentials {
+export interface Credentials {
   domain: string;
   apiKey: string;
 }
 
+// Request-scoped credential store. In gateway mode the HTTP layer runs each
+// request inside runWithCredentials({apiKey, domain}); getCredentials() reads it.
+// Falls back to process.env for stdio/single-tenant mode.
+const credStore = new AsyncLocalStorage<Credentials>();
+
+export function runWithCredentials<T>(creds: Credentials, fn: () => T): T {
+  return credStore.run(creds, fn);
+}
+
 export function getCredentials(): Credentials | null {
+  const scoped = credStore.getStore();
+  if (scoped?.apiKey && scoped?.domain) return scoped;
+
   const domain = process.env.FRESHDESK_DOMAIN;
   const apiKey = process.env.FRESHDESK_API_KEY;
   if (!domain || !apiKey) {
@@ -19,27 +29,14 @@ export function getCredentials(): Credentials | null {
   return { domain, apiKey };
 }
 
-/**
- * Drop the cached client so the next getClient() rebuilds with fresh
- * credentials. Called by the HTTP gateway path after injecting per-request
- * headers into process.env.
- */
-export function resetClient(): void {
-  _client = null;
-  _credKey = null;
-}
-
-export async function getClient(): Promise<FreshdeskClient> {
+// Constructs a client from the request-scoped (or env) credentials. The client
+// is cheap and holds no shared mutable state, so we build one per call — never
+// a process-global singleton.
+export function getClient(): FreshdeskClient {
   const creds = getCredentials();
   if (!creds) {
     throw new Error('No Freshdesk API credentials configured. Set FRESHDESK_DOMAIN and FRESHDESK_API_KEY.');
   }
-
-  const key = `${creds.domain}:${creds.apiKey}`;
-  if (_client && _credKey === key) return _client;
-
-  _client = new FreshdeskClient({ domain: creds.domain, apiKey: creds.apiKey });
-  _credKey = key;
   logger.info('Created Freshdesk API client', { domain: creds.domain });
-  return _client;
+  return new FreshdeskClient({ domain: creds.domain, apiKey: creds.apiKey });
 }
