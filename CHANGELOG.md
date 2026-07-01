@@ -28,3 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dual transport: stdio (local) and Streamable HTTP (gateway), with gateway-mode
   credential injection via `x-freshdesk-domain` / `x-freshdesk-api-key` headers.
 - MCP prompts: `ticket-triage`, `contact-lookup`, `sla-breach-check`.
+
+### Fixed
+- `/health` liveness endpoint now returns an unconditional `200` instead of gating on
+  credentials. The Azure Container Apps liveness probe hits `GET /health` with no
+  credentials, so the previous credential gate returned `503` and crash-looped the
+  container. Credential state is still reported in the response body
+  (`credentials.configured`); the request-scoped credential isolation for `/mcp`
+  (AsyncLocalStorage / `runWithCredentials`) is unchanged.
