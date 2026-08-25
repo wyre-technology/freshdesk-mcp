@@ -86,10 +86,13 @@ cp .env.example .env
 docker compose up -d
 ```
 
-The container requires `NODE_AUTH_TOKEN` at build time to install the private `@wyre-technology/node-freshdesk` package from GitHub Packages:
+The build installs `@wyre-technology/node-freshdesk` from GitHub Packages via a
+BuildKit npmrc secret (never baked into a layer):
 
 ```bash
-docker build --build-arg NODE_AUTH_TOKEN=$(gh auth token) -t freshdesk-mcp .
+printf '@wyre-ai:registry=https://npm.pkg.github.com\n@wyre-technology:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n' "$(gh auth token)" > /tmp/.npmrc
+docker build --secret id=npmrc,src=/tmp/.npmrc -t freshdesk-mcp .
+rm /tmp/.npmrc
 ```
 
 ## Development
