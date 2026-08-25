@@ -1,12 +1,12 @@
 # Freshdesk MCP Server
 
-[![Build Status](https://github.com/wyre-technology/freshdesk-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/wyre-technology/freshdesk-mcp/actions/workflows/release.yml)
+[![Build Status](https://github.com/WYRE-AI/freshdesk-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/WYRE-AI/freshdesk-mcp/actions/workflows/release.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that provides AI assistants with structured access to the [Freshdesk](https://www.freshdesk.com) customer support platform — tickets, contacts, companies, agents, groups, the knowledge base, and SLA/business-hours configuration.
 
-> **Note:** This project is maintained by [Wyre Technology](https://github.com/wyre-technology). It wraps the published [`@wyre-technology/node-freshdesk`](https://github.com/wyre-technology/node-freshdesk) SDK.
+> **Note:** This project is maintained by [Wyre Technology](https://github.com/WYRE-AI). It wraps the published [`@wyre-technology/node-freshdesk`](https://github.com/WYRE-AI/node-freshdesk) SDK.
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ The primary deployment is through the **WYRE MCP Gateway**, which hosts the cont
 claude mcp add freshdesk-mcp \
   -e FRESHDESK_DOMAIN=your-subdomain \
   -e FRESHDESK_API_KEY=your-api-key \
-  -- npx -y github:wyre-technology/freshdesk-mcp
+  -- npx -y github:WYRE-AI/freshdesk-mcp
 ```
 
 `FRESHDESK_DOMAIN` is the part before `.freshdesk.com` (for `https://acme.freshdesk.com` it is `acme`). Find your `FRESHDESK_API_KEY` in the Freshdesk portal under **Profile Settings**.

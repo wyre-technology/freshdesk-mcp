@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.wyre-technology/freshdesk-mcp",
+  "name": "io.github.WYRE-AI/freshdesk-mcp",
   "title": "Freshdesk",
   "description": "MCP server for Freshdesk — tickets, contacts, companies, agents, groups, and knowledge base.",
   "repository": {
-    "url": "https://github.com/wyre-technology/freshdesk-mcp",
+    "url": "https://github.com/WYRE-AI/freshdesk-mcp",
     "source": "github"
   },
   "version": "0.0.0",
-  "websiteUrl": "https://github.com/wyre-technology/freshdesk-mcp",
+  "websiteUrl": "https://github.com/WYRE-AI/freshdesk-mcp",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "ghcr.io/wyre-technology/freshdesk-mcp:0.0.0",
+      "identifier": "ghcr.io/wyre-ai/freshdesk-mcp:0.0.0",
       "transport": {
         "type": "stdio"
       },
