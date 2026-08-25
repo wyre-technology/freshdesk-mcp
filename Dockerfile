@@ -10,11 +10,12 @@ ARG NODE_AUTH_TOKEN
 # Set working directory
 WORKDIR /app
 
-# Copy package files and .npmrc for GitHub Packages auth
-COPY package*.json .npmrc ./
+# Copy package files (npm auth comes from the BuildKit npmrc secret provided
+# by the reusable release workflow: secret-files npmrc=/tmp/.npmrc)
+COPY package*.json ./
 
 # Install dependencies (--ignore-scripts prevents 'prepare' from running before source is copied)
-RUN npm ci --ignore-scripts
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci --ignore-scripts
 
 # Copy source code
 COPY . .
@@ -22,11 +23,8 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Prune dev dependencies in builder stage (while .npmrc auth is still available)
-RUN npm prune --omit=dev
-
-# Remove .npmrc so auth token is not leaked into production image
-RUN rm -f .npmrc
+# Prune dev dependencies in builder stage (while npmrc secret is available)
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm prune --omit=dev
 
 # Production stage
 FROM node:26-alpine AS production
